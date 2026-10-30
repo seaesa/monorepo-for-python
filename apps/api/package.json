@@ -1,0 +1,17 @@
+{
+  "name": "api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Turborepo wrapper around the uv-managed FastAPI project. Python deps live in pyproject.toml.",
+  "scripts": {
+    "dev": "uv run fastapi dev src/app/main.py --port 8000",
+    "worker": "uv run celery -A app.worker worker -l info",
+    "lint": "uv run ruff check . && uv run ruff format --check .",
+    "format": "uv run ruff check --fix . && uv run ruff format .",
+    "typecheck": "uv run mypy src",
+    "test": "uv run pytest",
+    "db:migrate": "uv run alembic upgrade head",
+    "db:revision": "uv run alembic revision --autogenerate -m",
+    "format:check": "uv run ruff format --check . && uv run ruff check --select I ."
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignoreBinaries": ["uv", "eslint"],
+  "ignore": ["packages/api-client/src/gen/**"],
+  "workspaces": {
+    "apps/web": {
+      "ignore": ["src/components/ui/**"]
+    },
+    "apps/mobile": {
+      "ignore": ["src/components/ui/**"]
+    }
+  }
+}

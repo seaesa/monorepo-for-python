@@ -1,0 +1,2 @@
+# Fast (turbo-cached) safety net before code leaves the machine; full suite runs in CI.
+pnpm turbo typecheck lint --filter=!api

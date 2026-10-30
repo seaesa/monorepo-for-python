@@ -4,8 +4,25 @@
   "singleQuote": false,
   "tabWidth": 2,
   "trailingComma": "es5",
-  "printWidth": 80,
-  "plugins": ["prettier-plugin-tailwindcss"],
-  "tailwindStylesheet": "packages/ui/src/styles/globals.css",
-  "tailwindFunctions": ["cn", "cva"]
+  "printWidth": 100,
+  "plugins": ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+  "importOrder": [
+    "<BUILTIN_MODULES>",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "^@workspace/(.*)$",
+    "",
+    "^@/(.*)$",
+    "",
+    "^[.]"
+  ],
+  "importOrderTypeScriptVersion": "5.0.0",
+  "tailwindStylesheet": "apps/web/src/styles/globals.css",
+  "tailwindFunctions": ["cn", "cva"],
+  "overrides": [
+    {
+      "files": "apps/mobile/**",
+      "options": { "tailwindStylesheet": "apps/mobile/src/global.css" }
+    }
+  ]
 }

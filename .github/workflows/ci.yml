@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Backend: lint, strict typing, migrations in sync with models, tests on real Postgres/Redis.
+  api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-retries 10
+      redis:
+        image: redis:8-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/app
+      REDIS_URL: redis://localhost:6379/0
+      JWT_SECRET: ci-only-secret-that-is-at-least-32-characters
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy src
+      - name: Migrations apply and match models
+        run: |
+          uv run alembic upgrade head
+          uv run alembic check
+      - run: uv run pytest --cov=app --cov-report=term-missing
+        env:
+          DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/app_test
+
+  # Frontend: lint, typecheck, build. Fails if generated API client or theme is stale.
+  web-mobile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+      - run: pnpm install --frozen-lockfile
+      - run: cd apps/api && uv sync --locked
+      - name: API contract is up to date
+        run: |
+          pnpm codegen
+          git diff --exit-code -- packages/api-client || {
+            echo "::error::Generated API client is stale. Run 'pnpm codegen' and commit the result."
+            exit 1
+          }
+      - name: Design tokens generated and not overridden in app stylesheets
+        run: |
+          pnpm theme
+          git diff --exit-code -- packages/theme || {
+            echo "::error::Theme output is stale. Run 'pnpm theme' and commit the result."
+            exit 1
+          }
+      - run: pnpm format:check
+      - run: pnpm knip
+      - run: pnpm turbo lint typecheck --filter=!api
+      - run: pnpm turbo build --filter=web
+      - run: pnpm --filter mobile exec expo-doctor

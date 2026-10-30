@@ -1,0 +1,18 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "[python]": {
+    "editor.defaultFormatter": "charliermarshall.ruff",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    }
+  },
+  "python.defaultInterpreterPath": "apps/api/.venv/bin/python",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.associations": { "*.css": "tailwindcss" }
+}

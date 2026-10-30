@@ -1,0 +1,96 @@
+import type { Messages } from "../types"
+
+const vi: Messages = {
+  common: {
+    appName: "Todos",
+    retry: "Thử lại",
+    loading: "Đang tải…",
+    signOut: "Đăng xuất",
+    settings: "Cài đặt",
+  },
+  languages: {
+    vi: "Tiếng Việt",
+    en: "English",
+  },
+  settings: {
+    language: "Ngôn ngữ",
+    theme: "Giao diện",
+    themes: { system: "Theo hệ thống", light: "Sáng", dark: "Tối" },
+  },
+  auth: {
+    fields: {
+      email: "Email",
+      password: "Mật khẩu",
+      confirmPassword: "Xác nhận mật khẩu",
+      fullName: "Họ và tên",
+    },
+    login: {
+      title: "Chào mừng trở lại",
+      description: "Đăng nhập để quản lý công việc của bạn.",
+      submit: "Đăng nhập",
+      submitting: "Đang đăng nhập…",
+      noAccount: "Chưa có tài khoản?",
+      createOne: "Tạo tài khoản",
+    },
+    register: {
+      title: "Tạo tài khoản",
+      description: "Chỉ mất chưa đến một phút.",
+      submit: "Tạo tài khoản",
+      submitting: "Đang tạo…",
+      haveAccount: "Đã có tài khoản?",
+      signIn: "Đăng nhập",
+    },
+  },
+  todos: {
+    title: "Công việc của tôi",
+    tab: "Công việc",
+    placeholder: "Bạn cần làm gì?",
+    add: "Thêm",
+    added: "Đã thêm công việc",
+    delete: "Xoá",
+    markDone: 'Đánh dấu "{{title}}" là đã xong',
+    markNotDone: 'Đánh dấu "{{title}}" là chưa xong',
+    filters: { all: "Tất cả", active: "Đang làm", done: "Đã xong" },
+    empty: { title: "Chưa có gì ở đây", description: "Thêm công việc đầu tiên ở phía trên." },
+    loadError: "Không tải được danh sách công việc",
+    pagination: {
+      page: "Trang {{page}}/{{pages}}",
+      total_one: "{{count}} công việc",
+      total_other: "{{count}} công việc",
+      previous: "Trước",
+      next: "Sau",
+    },
+  },
+  profile: {
+    title: "Tài khoản",
+    account: "Tài khoản",
+    memberSince: "Thành viên từ {{date}}",
+  },
+  validation: {
+    passwordsMismatch: "Mật khẩu xác nhận không khớp",
+    missing: "Trường này là bắt buộc",
+    string_too_short: "Cần ít nhất {{min_length}} ký tự",
+    string_too_long: "Tối đa {{max_length}} ký tự",
+    value_error: "Giá trị không hợp lệ",
+    greater_than_equal: "Phải lớn hơn hoặc bằng {{ge}}",
+    less_than_equal: "Phải nhỏ hơn hoặc bằng {{le}}",
+  },
+  errors: {
+    bad_request: "Yêu cầu không hợp lệ",
+    http_error: "Yêu cầu thất bại",
+    invalid_credentials: "Email hoặc mật khẩu không đúng",
+    email_taken: "Email này đã được đăng ký",
+    account_disabled: "Tài khoản đã bị vô hiệu hoá",
+    invalid_token: "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+    unauthorized: "Vui lòng đăng nhập để tiếp tục",
+    forbidden: "Bạn không có quyền thực hiện thao tác này",
+    not_found: "Không tìm thấy",
+    conflict: "Dữ liệu đã tồn tại",
+    validation_error: "Vui lòng kiểm tra lại các trường được đánh dấu",
+    network_error: "Không kết nối được máy chủ. Kiểm tra lại mạng.",
+    internal_error: "Hệ thống đang gặp sự cố",
+    unknown_error: "Đã có lỗi xảy ra",
+  },
+}
+
+export default vi

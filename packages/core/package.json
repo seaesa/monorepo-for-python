@@ -1,0 +1,51 @@
+{
+  "name": "@workspace/core",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./auth": "./src/features/auth/index.ts",
+    "./lib/*": "./src/lib/*.ts",
+    "./preferences": "./src/features/preferences/index.ts",
+    "./realtime": "./src/features/realtime/index.ts",
+    "./todos": "./src/features/todos/index.ts"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^6.0.2",
+    "@workspace/api-client": "workspace:*",
+    "@workspace/i18n": "workspace:*",
+    "date-fns": "^4.4.0",
+    "socket.io-client": "^4.8.4"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5",
+    "axios": "^1",
+    "i18next": "^26",
+    "react": "^19",
+    "react-hook-form": "^7",
+    "react-i18next": "^17",
+    "zod": "^4",
+    "zustand": "^5"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "^5.105.0",
+    "@types/react": "^19",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "axios": "^1.21.0",
+    "eslint": "^10",
+    "i18next": "^26.5.12",
+    "react": "19.3.0",
+    "react-hook-form": "^7.91.0",
+    "react-i18next": "^17.1.9",
+    "typescript": "^5",
+    "zod": "^4.6.7",
+    "zustand": "^5.0.16"
+  }
+}

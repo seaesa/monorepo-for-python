@@ -1,0 +1,30 @@
+{
+  "name": "@workspace/i18n",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "sideEffects": [
+    "./src/index.ts"
+  ],
+  "scripts": {
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "peerDependencies": {
+    "i18next": "^26",
+    "react-i18next": "^17"
+  },
+  "devDependencies": {
+    "@workspace/api-client": "workspace:*",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "eslint": "^10",
+    "i18next": "^26.5.12",
+    "react": "19.3.0",
+    "react-i18next": "^17.1.9",
+    "typescript": "^5"
+  }
+}

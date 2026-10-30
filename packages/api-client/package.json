@@ -1,0 +1,34 @@
+{
+  "name": "@workspace/api-client",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "openapi:export": "cd ../../apps/api && uv run python scripts/export_openapi.py",
+    "generate": "openapi-ts && prettier --write openapi.json --log-level warn",
+    "codegen": "pnpm openapi:export && pnpm generate",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./zod": "./src/gen/zod.gen.ts",
+    "./query": "./src/gen/@tanstack/react-query.gen.ts"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5",
+    "axios": "^1",
+    "zod": "^4"
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "0.99.0",
+    "@tanstack/react-query": "^5.105.0",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "axios": "^1.21.0",
+    "eslint": "^10",
+    "typescript": "^5",
+    "zod": "^4.6.7"
+  }
+}

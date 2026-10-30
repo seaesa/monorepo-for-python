@@ -1,0 +1,20 @@
+import uuid
+from datetime import datetime
+
+from sqlalchemy import DateTime, ForeignKey, String, Text
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.core.database import Base, TimestampMixin, UUIDPrimaryKeyMixin
+
+
+class Todo(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    __tablename__ = "todos"
+
+    # Cross-module reference by id only — no ORM relationship to `users`.
+    owner_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    title: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
+    completed: Mapped[bool] = mapped_column(default=False)
+    due_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

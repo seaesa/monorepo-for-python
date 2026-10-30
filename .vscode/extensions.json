@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "charliermarshall.ruff",
+    "ms-python.python",
+    "expo.vscode-expo-tools",
+    "editorconfig.editorconfig"
+  ]
+}

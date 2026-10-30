@@ -5,3 +5,12 @@ node_modules/
 coverage/
 pnpm-lock.yaml
 .pnpm-store/
+
+# generated
+packages/api-client/src/gen/
+apps/mobile/src/uniwind-types.d.ts
+apps/mobile/.expo/
+apps/mobile/expo-env.d.ts
+
+# formatted by ruff
+apps/api/

@@ -1,0 +1,29 @@
+{
+  "name": "@workspace/theme",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "generate": "node scripts/generate.ts && prettier --write src/generated --log-level warn",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "check": "node scripts/check.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./web.css": "./src/generated/web.css",
+    "./native.css": "./src/generated/native.css"
+  },
+  "devDependencies": {
+    "@types/culori": "^4.0.1",
+    "@types/node": "^24",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "culori": "^4.0.2",
+    "eslint": "^10",
+    "typescript": "^5"
+  }
+}
