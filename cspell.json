@@ -1,0 +1,45 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "language": "en,en-GB",
+  "useGitignore": true,
+  "dictionaryDefinitions": [
+    {
+      "name": "project-words",
+      "path": "./.cspell/project-words.txt",
+      "addWords": true
+    }
+  ],
+  "dictionaries": [
+    "project-words",
+    "typescript",
+    "node",
+    "npm",
+    "python",
+    "css",
+    "html",
+    "softwareTerms",
+    "companies",
+    "misc"
+  ],
+  "ignorePaths": [
+    "pnpm-lock.yaml",
+    "**/uv.lock",
+    "**/node_modules/**",
+    "**/.venv/**",
+    "**/gen/**",
+    "**/generated/**",
+    "packages/api-client/openapi.json",
+    "packages/i18n/src/locales/vi.ts",
+    "**/*.svg",
+    "**/.git/**",
+    "apps/api/src/app/modules/*/templates.py"
+  ],
+  "ignoreRegExpList": ["\\b[0-9a-f]{12}\\b", "Urls", "Email", "HexValues"],
+  "overrides": [
+    {
+      "filename": "packages/i18n/src/locales/en.ts",
+      "ignoreRegExpList": ["Ti\u1ebfng Vi\u1ec7t"]
+    }
+  ]
+}

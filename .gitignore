@@ -43,3 +43,25 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.serena
+.codegraph
+.omo
+.omc
+!.env.development
+!.env.test
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+
+# tooling
+.playwright-mcp/
+
+# Superpowers scratch workspace
+.superpowers/
+

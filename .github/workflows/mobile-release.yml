@@ -1,0 +1,62 @@
+name: Mobile release
+
+# Push a tag `v1.2.3` → EAS builds a store-ready AAB + IPA (production) and an installable APK
+# (preview), then attaches all three to the GitHub Release of that tag.
+# Required secrets: EXPO_TOKEN (expo.dev → access tokens), EAS_PROJECT_ID.
+# Signing credentials are managed by EAS (`eas credentials`), never stored in the repo.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mobile-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: apps/mobile
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+        working-directory: .
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build production (AAB + IPA) and preview (APK)
+        run: |
+          eas build --profile production --platform all --non-interactive --wait --json > production.json
+          eas build --profile preview --platform android --non-interactive --wait --json > preview.json
+
+      - name: Download artifacts
+        run: |
+          mkdir -p dist
+          url() { jq -r ".[] | select(.platform == \"$2\") | .artifacts.buildUrl" "$1"; }
+          curl -fsSL "$(url production.json ANDROID)" -o "dist/app-${GITHUB_REF_NAME}.aab"
+          curl -fsSL "$(url production.json IOS)" -o "dist/app-${GITHUB_REF_NAME}.ipa"
+          curl -fsSL "$(url preview.json ANDROID)" -o "dist/app-${GITHUB_REF_NAME}.apk"
+
+      - name: Attach to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: apps/mobile/dist/*

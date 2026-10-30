@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@import "uniwind";
+@import "tw-animate-css";
+/* Design tokens shared with web — edit packages/theme/src/tokens.ts, never here. */
+@import "@workspace/theme/native.css";
+
+@theme {
+  --spacing-hairline: hairlineWidth();
+}

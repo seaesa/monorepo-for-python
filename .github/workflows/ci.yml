@@ -1,0 +1,176 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Backend: lint, strict typing, migrations in sync with models, tests on real Postgres/Redis.
+  api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-retries 10
+      redis:
+        image: redis:8-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s --health-retries 10
+    # Settings come from the committed `.env.development` (migrations) and `.env.test` (pytest).
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      - name: Lint (ruff, import contracts, declared dependencies)
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+          uv run lint-imports
+          uv run deptry src
+      - run: uv run mypy src
+      - name: Migrations apply and match models
+        run: |
+          uv run alembic upgrade head
+          uv run alembic check
+      - name: Migrations are safe to run on a live database (squawk)
+        run: uv run alembic upgrade base:head --sql | npx --yes squawk-cli@2
+      - run: uv run pytest --cov=app --cov-report=term-missing
+
+  # Frontend + repo-wide quality gates, typecheck, build. Fails if generated API client or theme is stale.
+  web-mobile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+      - run: pnpm install --frozen-lockfile
+      - run: cd apps/api && uv sync --locked
+      - name: API contract is up to date
+        run: |
+          pnpm codegen
+          git diff --exit-code -- packages/api-client || {
+            echo "::error::Generated API client is stale. Run 'pnpm codegen' and commit the result."
+            exit 1
+          }
+      - name: Design tokens generated and not overridden in app stylesheets
+        run: |
+          pnpm theme
+          git diff --exit-code -- packages/theme || {
+            echo "::error::Theme output is stale. Run 'pnpm theme' and commit the result."
+            exit 1
+          }
+      - name: Format (oxfmt + ruff)
+        run: pnpm format:check
+      - name: Lint (oxlint type-aware + ruff)
+        run: pnpm lint
+      - name: Architecture boundaries (dependency-cruiser)
+        run: pnpm lint:deps
+      - name: Spelling (cspell)
+        run: pnpm lint:spell
+      - name: Duplication (jscpd)
+        run: pnpm lint:dup
+      - name: Workspace consistency (sherif)
+        run: pnpm lint:monorepo
+      - name: Dead code (knip)
+        run: pnpm knip
+      - run: pnpm turbo typecheck --filter=!api
+      - run: pnpm turbo build --filter=web
+        env:
+          NEXT_PUBLIC_API_URL: https://api.example.com
+          NEXT_PUBLIC_APP_ENV: production
+      - run: pnpm --filter mobile exec expo-doctor
+
+  # Frontend unit tests: shared business logic only (packages/core, Vitest).
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm turbo test --filter=!api
+
+  # API contract: a PR must not break existing clients (old mobile builds keep calling the API).
+  # Intentional breaks need the `breaking-api` label and a migration plan (see docs/adr/0003).
+  api-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: jdx/mise-action@v5
+        with:
+          install_args: "github:oasdiff/oasdiff"
+      - name: No breaking changes in openapi.json
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'breaking-api') }}
+        run: |
+          git show "${{ github.event.pull_request.base.sha }}:packages/api-client/openapi.json" > /tmp/base.json
+          oasdiff breaking /tmp/base.json packages/api-client/openapi.json --fail-on ERR --format githubactions
+
+  # Secrets in history, known vulnerabilities in production dependencies.
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: jdx/mise-action@v5
+        with:
+          install_args: gitleaks
+      - run: gitleaks git --no-banner --redact -v
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+      - run: pnpm install --frozen-lockfile
+      - run: cd apps/api && uv sync --locked
+      - run: pnpm run audit
+
+  # Conventional Commits on every commit of a pull request (same rules as the commit-msg hook).
+  commitlint:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: >-
+          pnpm commitlint --from ${{ github.event.pull_request.base.sha }}
+          --to ${{ github.event.pull_request.head.sha }} --verbose

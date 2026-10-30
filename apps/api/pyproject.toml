@@ -1,0 +1,117 @@
+[project]
+name = "api"
+version = "0.1.0"
+description = "FastAPI modular monolith backend"
+readme = "README.md"
+authors = [
+    { name = "seaesa", email = "hairipi100@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "aiosmtplib>=5.1.3",
+    "alembic>=1.20.1",
+    "asyncpg>=0.32.0",
+    "celery[redis]>=5.6.3",
+    "dishka>=1.10.1",
+    "email-validator>=2.3.0",
+    "fastapi[standard]>=0.162.0",
+    "httpx>=0.28.1",
+    "prometheus-client>=0.26.0",
+    "pwdlib[argon2]>=0.3.1",
+    "pydantic>=2.12",
+    "pydantic-settings>=2.16.2",
+    "pyjwt>=2.15.1",
+    "python-socketio>=5.17.1",
+    # kombu 5.6 (what celery 5.6 requires) caps redis<6.5; only the 5.7 pre-release
+    # lifts that cap, and its RC breaks celery's task handler. Stay on a stable stack.
+    "redis>=6.4,<6.5",
+    "sentry-sdk[fastapi]>=2.73.0",
+    "sqlalchemy[asyncio]>=2.1.6",
+    "starlette>=0.50",
+    "structlog>=26.1.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "asgi-lifespan>=2.1.0",
+    "deptry>=0.25.1",
+    "import-linter>=2.16",
+    "mypy>=2.4.1",
+    "pip-audit>=2.10.1",
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.4.1",
+    "pytest-cov>=7.1.0",
+    "python-socketio[asyncio-client]>=5.17.1",
+    "ruff>=0.17.3",
+]
+
+[tool.uv.build-backend]
+module-name = "app"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "N", "SIM", "ASYNC", "RUF", "C4", "PT", "RET"]
+ignore = ["B008", "E501"]  # line length is handled by `ruff format`
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+plugins = ["pydantic.mypy"]
+mypy_path = "src"
+exclude = ["migrations/"]
+
+[[tool.mypy.overrides]]
+module = ["celery.*", "socketio.*", "engineio.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["app.core.realtime"]
+disallow_subclassing_any = false
+
+[[tool.mypy.overrides]]
+module = ["app.modules.*.tasks"]
+disallow_untyped_decorators = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+
+[tool.deptry]
+known_first_party = ["app"]
+
+[tool.deptry.per_rule_ignores]
+# Loaded by name at runtime (DB driver, Alembic CLI, EmailStr validator), never imported.
+DEP002 = ["alembic", "asyncpg", "email-validator"]
+# Ships with pydantic, versioned together.
+DEP003 = ["pydantic_core"]
+
+[tool.importlinter]
+root_package = "app"
+
+[[tool.importlinter.contracts]]
+name = "core is infrastructure: it never depends on business modules"
+type = "forbidden"
+source_modules = ["app.core"]
+forbidden_modules = ["app.modules"]
+# Composition roots: they only collect MODULE_PROVIDERS to build the DI container.
+ignore_imports = ["app.core.ioc -> app.modules", "app.core.worker_container -> app.modules"]
+
+[[tool.importlinter.contracts]]
+name = "shared holds generic building blocks only"
+type = "forbidden"
+source_modules = ["app.shared"]
+forbidden_modules = ["app.modules"]

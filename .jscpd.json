@@ -1,0 +1,26 @@
+{
+  "threshold": 1,
+  "minTokens": 60,
+  "minLines": 8,
+  "reporters": ["console"],
+  "gitignore": true,
+  "absolute": false,
+  "path": [
+    "apps/web/src",
+    "apps/mobile/src",
+    "packages/core/src",
+    "packages/i18n/src",
+    "packages/theme/src",
+    "packages/theme/scripts",
+    "packages/api-client/src",
+    "apps/api/src"
+  ],
+  "ignore": [
+    "**/gen/**",
+    "**/generated/**",
+    "**/components/ui/**",
+    "**/locales/**",
+    "**/*.test.ts",
+    "**/migrations/**"
+  ]
+}

@@ -1,0 +1,242 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "eslint",
+    "typescript",
+    "unicorn",
+    "oxc",
+    "import",
+    "react",
+    "react-perf",
+    "jsx-a11y",
+    "promise",
+    "vitest"
+  ],
+  "jsPlugins": [
+    {
+      "name": "react-hooks-js",
+      "specifier": "eslint-plugin-react-hooks"
+    },
+    "@tanstack/eslint-plugin-query",
+    {
+      "name": "node-js",
+      "specifier": "eslint-plugin-n"
+    }
+  ],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "error"
+  },
+  "options": {
+    "typeAware": true,
+    "denyWarnings": true,
+    "reportUnusedDisableDirectives": "error"
+  },
+  "settings": {
+    "react": {
+      "version": "19.3"
+    }
+  },
+  "env": {
+    "browser": true,
+    "es2024": true
+  },
+  "ignorePatterns": [
+    "**/gen/**",
+    "**/generated/**",
+    "**/.next/**",
+    "**/.expo/**",
+    "**/dist/**",
+    "**/*.d.ts",
+    "apps/api/**",
+    "apps/*/src/components/ui/**"
+  ],
+  "rules": {
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
+    "no-alert": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "eqeqeq": [
+      "error",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
+    "no-param-reassign": "error",
+    "no-nested-ternary": "error",
+    "max-depth": ["error", 4],
+    "max-params": ["error", 4],
+    "typescript/no-explicit-any": "error",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/consistent-type-imports": "error",
+    "typescript/consistent-type-definitions": ["error", "interface"],
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": {
+          "attributes": false
+        }
+      }
+    ],
+    "typescript/await-thenable": "error",
+    "typescript/switch-exhaustiveness-check": "error",
+    "typescript/no-unnecessary-type-assertion": "error",
+    "typescript/prefer-nullish-coalescing": [
+      "error",
+      {
+        "ignorePrimitives": {
+          "string": true
+        }
+      }
+    ],
+    "typescript/no-unnecessary-condition": "off",
+    "unicorn/filename-case": [
+      "error",
+      {
+        "case": "kebabCase"
+      }
+    ],
+    "unicorn/no-null": "off",
+    "unicorn/prefer-node-protocol": "error",
+    "unicorn/no-array-for-each": "error",
+    "unicorn/prefer-string-replace-all": "error",
+    "unicorn/no-useless-undefined": "error",
+    "import/no-cycle": "error",
+    "import/no-self-import": "error",
+    "import/no-duplicates": "error",
+    "import/no-default-export": "error",
+    "import/no-namespace": "off",
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "react/jsx-key": "error",
+    "react/no-array-index-key": "error",
+    "react/self-closing-comp": "error",
+    "react/jsx-no-useless-fragment": "error",
+    "react/jsx-boolean-value": "error",
+    "react/react-in-jsx-scope": "off",
+    "react-perf/jsx-no-new-object-as-prop": "off",
+    "react-perf/jsx-no-new-array-as-prop": "off",
+    "react-perf/jsx-no-new-function-as-prop": "off",
+    "react-perf/jsx-no-jsx-as-prop": "off",
+    "react-hooks-js/purity": "error",
+    "react-hooks-js/refs": "error",
+    "react-hooks-js/immutability": "error",
+    "react-hooks-js/globals": "error",
+    "react-hooks-js/set-state-in-render": "error",
+    "react-hooks-js/set-state-in-effect": "error",
+    "react-hooks-js/static-components": "error",
+    "react-hooks-js/use-memo": "error",
+    "react-hooks-js/preserve-manual-memoization": "error",
+    "react-hooks-js/incompatible-library": "error",
+    "react-hooks-js/error-boundaries": "error",
+    "react-hooks-js/unsupported-syntax": "error",
+    "@tanstack/query/exhaustive-deps": "error",
+    "@tanstack/query/no-rest-destructuring": "error",
+    "@tanstack/query/stable-query-client": "error",
+    "@tanstack/query/no-unstable-deps": "error",
+    "@tanstack/query/no-void-query-fn": "error",
+    "@tanstack/query/infinite-query-property-order": "error",
+    "@tanstack/query/mutation-property-order": "error",
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrors": "none"
+      }
+    ],
+    "typescript/no-unsafe-type-assertion": "off",
+    "typescript/consistent-return": "off",
+    "import/no-unassigned-import": [
+      "error",
+      {
+        "allow": ["**/*.css", "@/lib/polyfills", "intl-pluralrules"]
+      }
+    ],
+    "import/no-named-as-default-member": "off",
+    "no-underscore-dangle": "off",
+    "jsx-a11y/prefer-tag-over-role": "off",
+    "vitest/require-to-throw-message": "off",
+    "node-js/no-process-env": "error"
+  },
+  "overrides": [
+    {
+      "files": [
+        "apps/web/src/app/**",
+        "apps/mobile/src/app/**",
+        "**/*.config.{js,mjs,cjs,ts,mts}",
+        "**/.dependency-cruiser.cjs"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      "files": ["apps/mobile/src/app/**"],
+      "rules": {
+        "unicorn/filename-case": "off"
+      }
+    },
+    {
+      "files": ["apps/web/**"],
+      "plugins": [
+        "eslint",
+        "typescript",
+        "unicorn",
+        "oxc",
+        "import",
+        "react",
+        "react-perf",
+        "jsx-a11y",
+        "promise",
+        "nextjs"
+      ]
+    },
+    {
+      "files": ["apps/mobile/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "@hugeicons/core-free-icons",
+                "message": "Metro does not tree-shake: import each icon, e.g. `import Delete02Icon from \"@hugeicons/core-free-icons/Delete02Icon\"`."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["**/scripts/**", "**/*.config.*"],
+      "env": {
+        "node": true
+      },
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx"],
+      "rules": {
+        "typescript/no-non-null-assertion": "off",
+        "max-params": "off"
+      }
+    },
+    {
+      "files": ["apps/*/src/lib/env.ts", "**/*.config.*", "**/scripts/**"],
+      "rules": {
+        "node-js/no-process-env": "off"
+      }
+    }
+  ]
+}

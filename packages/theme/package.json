@@ -1,0 +1,27 @@
+{
+  "name": "@workspace/theme",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "generate": "node scripts/generate.ts && oxfmt src/generated",
+    "typecheck": "tsc --noEmit",
+    "check": "node scripts/check.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./colors": "./src/generated/colors.ts",
+    "./web.css": "./src/generated/web.css",
+    "./native.css": "./src/generated/native.css"
+  },
+  "devDependencies": {
+    "@types/culori": "^4.0.1",
+    "@types/node": "catalog:",
+    "@workspace/typescript-config": "workspace:*",
+    "culori": "^4.0.2",
+    "typescript": "catalog:"
+  }
+}

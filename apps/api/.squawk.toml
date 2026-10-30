@@ -1,0 +1,4 @@
+# Postgres migration linter (pnpm --filter api db:lint), fed the SQL Alembic would run.
+# String(n) is a deliberate validation limit mirrored in the API schemas; widening one is rare.
+excluded_rules = ["prefer-text-field", "prefer-bigint-over-int"]
+pg_version = "18"

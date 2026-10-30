@@ -1,0 +1,26 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit"
+  },
+  "oxc.fmt.experimental": true,
+  "oxc.typeAware": true,
+  "[python]": {
+    "editor.defaultFormatter": "charliermarshall.ruff",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    }
+  },
+  "python.defaultInterpreterPath": "apps/api/.venv/bin/python",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.associations": { "*.css": "tailwindcss" },
+  "cSpell.customDictionaries": {
+    "project-words": {
+      "name": "project-words",
+      "path": "${workspaceFolder}/.cspell/project-words.txt",
+      "addWords": true
+    }
+  }
+}

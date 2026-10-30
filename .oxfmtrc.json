@@ -1,0 +1,65 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "semi": false,
+  "singleQuote": false,
+  "tabWidth": 2,
+  "printWidth": 100,
+  "trailingComma": "es5",
+  "endOfLine": "lf",
+  "sortPackageJson": false,
+  "sortImports": {
+    "internalPattern": ["@/"],
+    "customGroups": [
+      {
+        "groupName": "workspace",
+        "elementNamePattern": ["@workspace/**"]
+      }
+    ],
+    "groups": [
+      ["side_effect", "side_effect_style"],
+      {
+        "newlinesBetween": true
+      },
+      ["builtin", "type-builtin"],
+      ["external", "type-external"],
+      {
+        "newlinesBetween": true
+      },
+      "workspace",
+      {
+        "newlinesBetween": true
+      },
+      ["internal", "type-internal"],
+      {
+        "newlinesBetween": true
+      },
+      ["parent", "sibling", "index", "type-parent", "type-sibling", "type-index"],
+      "unknown"
+    ],
+    "sortSideEffects": false,
+    "newlinesBetween": false
+  },
+  "sortTailwindcss": {
+    "stylesheet": "apps/web/src/styles/globals.css",
+    "functions": ["cn", "cva"]
+  },
+  "overrides": [
+    {
+      "files": ["apps/mobile/**"],
+      "options": {
+        "sortTailwindcss": {
+          "stylesheet": "apps/mobile/src/global.css",
+          "functions": ["cn", "cva"]
+        }
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "pnpm-lock.yaml",
+    "packages/api-client/src/gen/**",
+    "apps/mobile/src/uniwind-types.d.ts",
+    "apps/mobile/expo-env.d.ts",
+    "apps/api/**",
+    "**/.venv/**"
+  ]
+}

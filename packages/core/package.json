@@ -1,0 +1,52 @@
+{
+  "name": "@workspace/core",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./auth": "./src/features/auth/index.ts",
+    "./lib/*": "./src/lib/*.ts",
+    "./notifications": "./src/features/notifications/index.ts",
+    "./preferences": "./src/features/preferences/index.ts",
+    "./realtime": "./src/realtime/index.ts",
+    "./todos": "./src/features/todos/index.ts",
+    "./app-update": "./src/features/app-update/index.ts"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^7.0.6",
+    "@workspace/api-client": "workspace:*",
+    "@workspace/i18n": "workspace:*",
+    "date-fns": "^4.4.0",
+    "socket.io-client": "^4.8.4"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5",
+    "axios": "^1",
+    "i18next": "^27",
+    "react": "^19",
+    "react-hook-form": "^7",
+    "react-i18next": "^18",
+    "zod": "^4",
+    "zustand": "^5"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "catalog:",
+    "@types/react": "catalog:",
+    "@workspace/typescript-config": "workspace:*",
+    "axios": "catalog:",
+    "i18next": "catalog:",
+    "react": "catalog:",
+    "react-hook-form": "catalog:",
+    "react-i18next": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "^5.1.0",
+    "zod": "catalog:",
+    "zustand": "catalog:"
+  }
+}

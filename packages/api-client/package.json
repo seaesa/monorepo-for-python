@@ -1,0 +1,31 @@
+{
+  "name": "@workspace/api-client",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "openapi:export": "cd ../../apps/api && uv run python scripts/export_openapi.py",
+    "generate": "openapi-ts && oxfmt openapi.json",
+    "codegen": "pnpm openapi:export && pnpm generate",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./zod": "./src/gen/zod.gen.ts",
+    "./query": "./src/gen/@tanstack/react-query.gen.ts"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5",
+    "axios": "^1",
+    "zod": "^4"
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "0.99.0",
+    "@tanstack/react-query": "catalog:",
+    "@workspace/typescript-config": "workspace:*",
+    "axios": "catalog:",
+    "typescript": "catalog:",
+    "zod": "catalog:"
+  }
+}

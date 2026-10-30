@@ -1,0 +1,81 @@
+# The whole stack in containers: `docker compose -f docker-compose.full.yml up --build`
+# Local development stays in docker-compose.yml (infrastructure only, apps on the host).
+name: monorepo-full
+
+x-api-environment: &api-environment
+  ENVIRONMENT: production
+  DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/app
+  REDIS_URL: redis://redis:6379/0
+  CELERY_BROKER_URL: redis://redis:6379/1
+  CELERY_RESULT_BACKEND: redis://redis:6379/2
+  CORS_ORIGINS: http://localhost:3000
+  FRONTEND_URL: http://localhost:3000
+  EMAIL_BACKEND: smtp
+  EMAIL_FROM: no-reply@example.com
+  SMTP_HOST: mailpit
+  SMTP_PORT: "1025"
+  PUSH_BACKEND: expo
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
+    volumes: [postgres-data:/var/lib/postgresql]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:8-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
+  # Catches every email the API sends. Web UI: http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports: ["8025:8025"]
+
+  api:
+    build: ./apps/api
+    command:
+      - sh
+      - -c
+      - alembic upgrade head && fastapi run src/app/main.py --host 0.0.0.0 --port 8000
+    environment:
+      <<: *api-environment
+      # Required: production refuses to boot with the development placeholder.
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET to a random 32+ character secret}
+    ports: ["8000:8000"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  worker:
+    build: ./apps/api
+    command: celery -A app.worker worker -l info --concurrency 2
+    environment:
+      <<: *api-environment
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET to a random 32+ character secret}
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        # The browser calls this URL, so it must be reachable from the host.
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+        NEXT_PUBLIC_APP_ENV: production
+    ports: ["3000:3000"]
+    depends_on: [api]
+
+volumes:
+  postgres-data:

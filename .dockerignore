@@ -1,0 +1,14 @@
+# Docker reads this from the build context root, which is the repo root for apps/web.
+.git
+.github
+.superpowers
+**/node_modules
+**/.next
+**/.turbo
+**/dist
+**/coverage
+**/.expo
+**/__pycache__
+**/.venv
+**/*.log
+docker-compose*.yml

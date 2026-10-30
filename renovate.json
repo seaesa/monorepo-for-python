@@ -1,0 +1,66 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":semanticCommits", ":semanticCommitScope(deps)"],
+  "timezone": "Asia/Ho_Chi_Minh",
+  "schedule": ["before 6am on monday"],
+  "minimumReleaseAge": "3 days",
+  "rangeStrategy": "bump",
+  "lockFileMaintenance": { "enabled": true },
+  "postUpdateOptions": ["pnpmDedupe"],
+  "packageRules": [
+    {
+      "description": "Expo pins react, react-native and every native module; upgrade them only with `npx expo install --fix` during an SDK upgrade.",
+      "matchFileNames": ["apps/mobile/package.json"],
+      "matchPackageNames": [
+        "expo",
+        "expo-*",
+        "react-native",
+        "react-native-*",
+        "@expo/*",
+        "@react-native/*"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "React is pinned repo-wide to the version Expo requires.",
+      "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
+      "enabled": false
+    },
+    {
+      "description": "TypeScript stays on the major Expo supports.",
+      "matchPackageNames": ["typescript"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "groupName": "code quality tooling",
+      "matchPackageNames": [
+        "oxlint",
+        "oxfmt",
+        "oxlint-tsgolint",
+        "knip",
+        "cspell",
+        "jscpd",
+        "sherif",
+        "lefthook",
+        "dependency-cruiser",
+        "squawk-cli",
+        "@commitlint/*",
+        "eslint-plugin-*",
+        "@tanstack/eslint-plugin-query"
+      ]
+    },
+    { "groupName": "sentry", "matchPackageNames": ["@sentry/*", "sentry-sdk"] },
+    { "groupName": "tanstack query", "matchPackageNames": ["@tanstack/*query*"] },
+    { "groupName": "i18next", "matchPackageNames": ["i18next", "react-i18next"] },
+    { "groupName": "github actions", "matchManagers": ["github-actions"] },
+    { "groupName": "python dev tools", "matchManagers": ["pep621"], "matchDepTypes": ["dev"] },
+    { "groupName": "tool versions (mise)", "matchManagers": ["mise"] },
+    {
+      "description": "Patches of dev tooling are low risk.",
+      "matchDepTypes": ["devDependencies", "dev"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true
+    }
+  ]
+}

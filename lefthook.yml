@@ -1,0 +1,36 @@
+# Git hooks. Installed by `pnpm install` (root `prepare`). Never bypass with --no-verify.
+pre-commit:
+  parallel: true
+  jobs:
+    - name: secrets
+      run: mise x -- gitleaks git --pre-commit --staged --no-banner --redact
+    - name: format
+      glob: "*.{js,mjs,cjs,ts,tsx,json,jsonc,md,yml,yaml,css}"
+      run: pnpm oxfmt --no-error-on-unmatched-pattern {staged_files}
+      stage_fixed: true
+    - name: lint
+      glob: "*.{js,mjs,cjs,ts,tsx}"
+      run: pnpm oxlint --fix {staged_files}
+      stage_fixed: true
+    - name: spell
+      run: pnpm cspell --no-progress --no-must-find-files {staged_files}
+    - name: python
+      root: "apps/api/"
+      glob: "*.py"
+      run: uv run ruff check --fix {staged_files} && uv run ruff format {staged_files}
+      stage_fixed: true
+
+commit-msg:
+  jobs:
+    - name: commitlint
+      run: pnpm commitlint --edit {1}
+
+pre-push:
+  parallel: true
+  jobs:
+    - name: typecheck
+      run: pnpm turbo typecheck --filter=!api
+    - name: deps
+      run: pnpm lint:deps
+    - name: monorepo
+      run: pnpm lint:monorepo

@@ -1,0 +1,27 @@
+{
+  "name": "@workspace/i18n",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "sideEffects": [
+    "./src/index.ts"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "peerDependencies": {
+    "i18next": "^27",
+    "react-i18next": "^18"
+  },
+  "devDependencies": {
+    "@workspace/api-client": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "i18next": "catalog:",
+    "react": "catalog:",
+    "react-i18next": "catalog:",
+    "typescript": "catalog:"
+  }
+}
